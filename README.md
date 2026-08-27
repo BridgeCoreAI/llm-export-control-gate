@@ -8,6 +8,14 @@ A reference implementation of a runtime admissibility gate for AI pipelines that
 
 The guarantee: nothing controlled reaches an unapproved endpoint. Every decision is on record. Every record maps to a control.
 
+## Why this exists
+
+Organizations adopting LLMs inside environments that also handle export-controlled or CUI data face a specific, concrete risk: a request containing controlled data can reach an unauthorized model endpoint before any human notices. A policy stating "do not paste ITAR data into a commercial model" is not enforcement. It is a hope.
+
+Most AI governance guidance for these environments stops at the policy layer, telling people what they should not do, without a mechanism that actually stops them from doing it at the moment it matters. This project replaces that hope with a checkpoint every request must pass through, with three defined outcomes (permit, block, or flag for human review), and a tamper-evident record of every decision made.
+
+It was built to demonstrate that principle for one specific, high-stakes case: AI systems operating inside defense and government environments where RMF, CMMC, and export control requirements already apply, and where an LLM is a new component that existing controls were not written with in mind.
+
 ## Important scope note
 
 This is a reference architecture, not a legally binding classification system. The classification step uses explainable, rule-based pattern matching to demonstrate the gate mechanism. It does not replace an organization's actual export-control and CUI classification authority. See `docs/SPECIFICATION.md` Section 8 for explicit non-goals.
