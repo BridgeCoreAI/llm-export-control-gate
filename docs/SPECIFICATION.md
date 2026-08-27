@@ -53,7 +53,7 @@ This system is designed to satisfy five guarantees, verified by the adversarial 
 
 **G2: Fail-Closed Default.** Any error, timeout, missing classification, or unrecognized data class results in Blocked, never Permitted. The absence of a decision is not an implicit permit.
 
-**G3: No Silent Escalation to Permit.** A Flagged request can only become Permitted through an explicit, logged human decision. A Flagged request can never become Permitted through timeout, retry, or system default.
+**G3: No Silent Escalation to Permit.** A Flagged request can only become Permitted through an explicit, logged human decision. A Flagged request can never become Permitted through timeout, retry, or system default. The override must reference the specific flagged audit entry it resolves (by entry hash); an override cannot be logged against a request that was never flagged.
 
 **G4: Immutable, Attributable Evidence.** Every decision produces a log entry containing the decision, the request's classification, the destination, a reason code, a timestamp, and (for human overrides) the identity of the reviewer. Log entries are hash-chained; altering a past entry invalidates the chain from that point forward.
 
@@ -89,6 +89,7 @@ This specification does not define or claim:
 - Legally authoritative ITAR or CUI classification. That determination belongs to an organization's export-control and security compliance functions.
 - User identity or access-control verification (for example, confirming a requester's US-person status for ITAR access). This system assumes that verification happens upstream or in a complementary system.
 - Model output filtering. This gate controls what reaches a model, not what a model returns. Output-side controls are a separate concern.
+- Durable storage. The reference implementation holds the audit trail in memory for demonstration purposes. A production deployment must persist entries to durable, access-controlled storage so the hash chain survives restarts and is protected from modification at rest.
 
 ---
 

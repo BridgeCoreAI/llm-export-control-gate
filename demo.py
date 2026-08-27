@@ -71,7 +71,9 @@ def main():
         reviewer_identity="reviewer-gadjeli",
         human_decision=Decision.BLOCKED,
         reason_code="confirmed_injection_attempt_on_review",
+        flagged_entry_hash=flagged.log_entry_hash,
     )
+    print(f"  Flagged patterns:  {flagged.injection_flags}")
     print(f"  Reviewer decision: {override.decision.value}")
     print(f"  Logged reviewer:   reviewer-gadjeli")
 

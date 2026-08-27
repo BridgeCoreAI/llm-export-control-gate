@@ -144,6 +144,7 @@ class TestEvidenceRecordIntegrity:
             reviewer_identity="reviewer-gadjeli",
             human_decision=Decision.BLOCKED,
             reason_code="confirmed_on_review",
+            flagged_entry_hash=result.log_entry_hash,
         )
         records = bridge_audit_trail(self.trail, source_system="test-system")
         override_records = [r for r in records if r.reviewer_identity]

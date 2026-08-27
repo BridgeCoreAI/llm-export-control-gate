@@ -78,6 +78,17 @@ class AuditTrail:
     def entries(self) -> list:
         return list(self._entries)
 
+    def find_by_hash(self, entry_hash: str) -> LogEntry:
+        """
+        Return the entry with the given hash, or None if no such entry
+        exists. Used by the gate to bind human overrides to the specific
+        flagged entry they resolve (guarantee G3).
+        """
+        for entry in self._entries:
+            if entry.entry_hash == entry_hash:
+                return entry
+        return None
+
     def verify_chain(self) -> bool:
         """
         Returns True if every entry's stored hash matches a freshly

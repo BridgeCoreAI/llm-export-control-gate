@@ -21,18 +21,24 @@ INJECTION_PATTERNS = [
 ]
 
 
-def screen_for_injection(request_text: str) -> list:
+def screen_for_injection(request_text: str, context_text: str = "") -> list:
     """
     Returns a list of matched injection/extraction patterns, if any.
     An empty list means no suspected injection detected. This does not
     itself decide the outcome; the gate decides how to weigh a
     detected pattern (see gate.py).
+
+    The attached context is screened together with the request text,
+    mirroring classification.py: an injection attempt smuggled in via
+    context while the request text looks clean must still be caught.
     """
     if request_text is None or not isinstance(request_text, str):
         return ["malformed_input"]
 
+    combined = f"{request_text}\n{context_text or ''}"
+
     hits = []
     for pattern in INJECTION_PATTERNS:
-        if re.search(pattern, request_text, re.IGNORECASE):
+        if re.search(pattern, combined, re.IGNORECASE):
             hits.append(pattern)
     return hits

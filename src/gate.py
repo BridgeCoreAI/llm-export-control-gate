@@ -9,7 +9,6 @@ this function.
 
 from dataclasses import dataclass
 from enum import Enum
-from datetime import datetime, timezone
 
 from .classification import classify, DataClass, ClassificationResult
 from .injection_screen import screen_for_injection
@@ -64,13 +63,17 @@ class AdmissibilityGate:
         other sanctioned path.
         """
         classification = classify(request_text, context_text)
-        injection_flags = screen_for_injection(request_text)
+        # Screen request AND context: an injection attempt smuggled in
+        # via attached context must flag exactly as one in the request
+        # body would.
+        injection_flags = screen_for_injection(request_text, context_text)
 
         # Guarantee G2: fail closed on unrecognized classification.
         if classification.data_class == DataClass.UNRECOGNIZED:
             return self._log_and_return(
                 Decision.BLOCKED, classification.data_class, destination,
                 reason_code="UNRECOGNIZED_CLASSIFICATION_FAIL_CLOSED",
+                injection_flags=injection_flags,
             )
 
         # Suspected injection/extraction attempt: flag, never silently permit.
@@ -78,6 +81,7 @@ class AdmissibilityGate:
             return self._log_and_return(
                 Decision.FLAGGED, classification.data_class, destination,
                 reason_code="SUSPECTED_INJECTION_OR_EXTRACTION",
+                injection_flags=injection_flags,
             )
 
         # Unknown destination is treated the same as an unauthorized
@@ -97,12 +101,15 @@ class AdmissibilityGate:
 
     def resolve_flagged(self, destination: str, data_class: DataClass,
                          reviewer_identity: str, human_decision: str,
-                         reason_code: str) -> GateResult:
+                         reason_code: str, flagged_entry_hash: str) -> GateResult:
         """
         The ONLY path by which a FLAGGED request may become PERMITTED.
-        Guarantee G3: this requires an explicit reviewer_identity. A
-        FLAGGED request can never become PERMITTED through timeout,
-        retry, or any path other than this explicit human decision.
+        Guarantee G3: this requires an explicit reviewer_identity AND a
+        reference to the specific FLAGGED audit entry being resolved
+        (flagged_entry_hash). An override cannot be logged against a
+        request that was never flagged, and a FLAGGED request can never
+        become PERMITTED through timeout, retry, or any path other than
+        this explicit human decision.
         """
         if not reviewer_identity:
             raise ValueError(
@@ -111,6 +118,14 @@ class AdmissibilityGate:
             )
         if human_decision not in (Decision.PERMITTED, Decision.BLOCKED):
             raise ValueError("human_decision must be PERMITTED or BLOCKED.")
+
+        flagged_entry = self.audit_trail.find_by_hash(flagged_entry_hash)
+        if flagged_entry is None or flagged_entry.decision != Decision.FLAGGED.value:
+            raise ValueError(
+                "resolve_flagged requires the hash of an existing FLAGGED "
+                "audit entry. An override cannot be logged against a request "
+                "that was never flagged."
+            )
 
         decision = human_decision
         log_decision = "OVERRIDE_PERMIT" if decision == Decision.PERMITTED else "OVERRIDE_BLOCK"
@@ -138,7 +153,8 @@ class AdmissibilityGate:
         )
 
     def _log_and_return(self, decision: Decision, data_class: DataClass,
-                         destination: str, reason_code: str) -> GateResult:
+                         destination: str, reason_code: str,
+                         injection_flags: list = None) -> GateResult:
         entry = self.audit_trail.append(
             decision=decision.value,
             data_class=data_class.value,
@@ -148,5 +164,5 @@ class AdmissibilityGate:
         )
         return GateResult(
             decision=decision, data_class=data_class, reason_code=reason_code,
-            injection_flags=[], log_entry_hash=entry.entry_hash,
+            injection_flags=injection_flags or [], log_entry_hash=entry.entry_hash,
         )

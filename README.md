@@ -51,7 +51,7 @@ python3 demo.py          # runnable end-to-end demonstration
 python3 -m pytest tests/ -v    # full adversarial and conformance test suite
 ```
 
-Current status: **50 adversarial and conformance tests passing.**
+Current status: **55 adversarial and conformance tests passing.**
 
 ## Project structure
 
