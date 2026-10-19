@@ -1,3 +1,5 @@
+[![tests](https://github.com/BridgeCoreAI/llm-export-control-gate/actions/workflows/tests.yml/badge.svg)](https://github.com/BridgeCoreAI/llm-export-control-gate/actions/workflows/tests.yml)
+
 # LLM Export-Control Gate
 
 **BridgeCore AI, Governance Systems Engineering Lab (GSEL)**
@@ -51,7 +53,7 @@ python3 demo.py          # runnable end-to-end demonstration
 python3 -m pytest tests/ -v    # full adversarial and conformance test suite
 ```
 
-Current status: **55 adversarial and conformance tests passing.**
+**Current status:** 55 adversarial and conformance tests passing — re-verified by CI on every push (see [Actions tab](https://github.com/BridgeCoreAI/llm-export-control-gate/actions/workflows/tests.yml)).
 
 ## Project structure
 
