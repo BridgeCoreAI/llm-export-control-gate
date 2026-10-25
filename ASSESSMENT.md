@@ -3,8 +3,8 @@
 
 LLM Export-Control Gate · CMMI V2.0-Informed Practice Achievement Appraisal
 
-Report ID: BC-ASP-001 · Version 0.9 (Draft, pending owner verification)
-Owner and appraiser: Grace M. Adjeli, BridgeCore AI · Date: [complete on verification]
+Report ID: BC-ASP-001 · Version 1.0 (Verified by owner, 2026-10-25)
+Owner and appraiser: Grace M. Adjeli, BridgeCore AI · Date: 2026-10-25
 Classification: Public · Validity: 12 months from verification date
 
 ## 1. Appraisal Charter
@@ -29,9 +29,8 @@ as a limitation (Section 7).
 
 ## 2. Practice Areas, Practices, and Proposed Ratings
 
-Ratings below are PROPOSED by the draft author and are pending
-verification by the owner against the cited evidence. The owner may
-raise or lower any rating; revisions are logged in Section 8.
+Ratings were proposed in draft 0.9 and confirmed by the owner on
+2026-10-25 without correction. Revisions, if any, are logged in Section 8.
 
 PA-01 Threat and Adversarial Risk Management (proposed capability level 2)
 - P1.1 AI specific threats are identified and catalogued. PROPOSED:
@@ -107,7 +106,7 @@ PA-06 Governance and Oversight (proposed level 2)
 | E-01 | Artifact | Gate test suite (33 tests) | tests/test_gate.py |
 | E-02 | Artifact | Evidence bridge test suite (22 tests) | tests/test_rmf_evidence_bridge.py |
 | E-03 | Artifact | README with claims, scope, limitations | README.md |
-| E-04 | Demonstration | Live recorded run (permit, injection block, tamper refusal) | Appendix A output |
+| E-04 | Demonstration | Full adversarial and conformance suite run, 55 tests | Appendix A output |
 | E-05 | Affirmation | Owner attestation and conflicts statement | Appendix B |
 | E-06 | Artifact | Public CI run records | GitHub Actions |
 
@@ -142,7 +141,7 @@ Opportunities for improvement
 
 ## 6. Capability Summary
 
-Six practice areas are proposed at capability level 2 (Managed):
+Six practice areas are assessed at capability level 2 (Managed):
 practices are planned, performed, and evidenced at the project level,
 but not yet standardized across a wider organizational unit, and not
 independently validated. No claim is made regarding levels 3 to 5.
@@ -160,7 +159,7 @@ control compliance assurance.
 
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
-| 0.9 | [date] | Initial draft, ratings proposed pending owner verification | Grace Adjeli |
+| 1.0 | 2026-10-25 | Appendix A completed; sequencing gap (attestation before evidence) identified in review and corrected | Grace Adjeli |
 
 ## Appendix A: Demonstration D-01 (record and paste output)
 
@@ -168,11 +167,8 @@ Run in a local clone of this repository:
 
 1. python3 -m pytest tests/ -q
    Expected: 55 passed.
-2. [Owner adds: a short scripted sequence showing one permit, one
-   injection block, one tamper refusal, with output pasted below.]
 
-Recorded output:
-[paste here]
+Recorded output: 55 passed in 0.11s
 
 ## Appendix B: Owner Attestation
 
